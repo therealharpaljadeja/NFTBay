@@ -1,25 +1,87 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import {
+    ChakraProvider,
+    VStack,
+    Spacer,
+    Grid,
+    Spinner,
+    HStack,
+    useDisclosure,
+} from "@chakra-ui/react";
+import theme from "./theme";
+import "@fontsource/inter/700.css";
+import "@fontsource/inter/400.css";
+import ProfilePage from "./pages/ProfilePage";
+import PostPage from "./pages/PostPage";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import { useContext } from "react";
+import { Web3Context } from "./context/Web3Context";
+import OnboardingModal from "./components/OnboardingModal";
+import Feed from "./pages/Feed";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const { _, __, onClose } = useDisclosure();
+
+    const web3Context = useContext(Web3Context);
+    const { accountId, evmAddress, userRegistered } = web3Context;
+
+    return (
+        <Router>
+            <ChakraProvider theme={theme}>
+                <Grid
+                    height="100vh"
+                    width="100vw"
+                    templateColumns={[
+                        "1fr",
+                        "1fr 1fr 1fr",
+                        "1fr 1fr 1fr",
+                        "1fr 1fr 1fr",
+                    ]}
+                >
+                    <VStack justifyContent="space-between" spacing={0}>
+                        <Header />
+                        <HStack
+                            width="100%"
+                            height="100%"
+                            alignItems="flex-start"
+                            justifyContent="center"
+                        >
+                            {
+                                accountId !== undefined ?
+                                // isCheckingUser == true ?
+                                    // <Spinner />
+                                    // :
+                                    userRegistered != null ?
+                                        userRegistered === true ?
+                                            <Switch>
+                                                <Route exact path="/">
+                                                    <ProfilePage />
+                                                </Route>
+                                                <Route exact path="/nft/:creator/:address/:id">
+                                                    <PostPage />
+                                                </Route>
+                                                <Route exact path="/feed">
+                                                    <Feed />
+                                                </Route>
+                                            </Switch>
+                                        :
+                                            <OnboardingModal accountAddress={evmAddress} isOpen={userRegistered === false} onClose={onClose} />
+                                    :
+                                        null
+                                :
+                                <>
+                                    <Spinner />
+                                </>
+                            }
+                        </HStack>
+                        <Spacer />
+                        <Footer />
+                    </VStack>
+                </Grid>
+            </ChakraProvider>
+        </Router>
+    );
 }
 
 export default App;
