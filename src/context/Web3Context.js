@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { isUserRegistered, getCreatorAddressBySender, getCreatorAddressByUsername, registerUser, getCreatorObjFromAddress } from "../utils/Creators";
 import { approveToMarketplace, mintNFT, tokenMetadata, tokenOwnedByUser } from "../utils/NFT";
-import { createMarketItem, createSale, fetchItemsCreated, fetchMarketItems, fetchMyNFTs } from "../utils/NFTMarket";
+import { createMarketItem, createSale, fetchItemsCreated, fetchMarketItems, fetchMyNFTs, getMarketItemByItemId } from "../utils/NFTMarket";
 import { Provider, Signer as EvmSigner } from '@reef-defi/evm-provider';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { WsProvider } from '@polkadot/rpc-provider';
+import { EventFragment } from "@ethersproject/abi";
 
 export const Web3Context = React.createContext(undefined);
 
@@ -20,7 +21,7 @@ export function Web3ContextProvider({ children }) {
 	const [accountSigner, setAccountSigner] = useState(null);
 	const [extensions, setExtensions] = useState(null);
 
-	const [accountId, setAccountId] = useState();
+	const [accountId, setAccountId] = useState(null);
 	const [evmAddress, setEvmAddress] = useState(null);
 	const [evmProvider, setEvmProvider] = useState(null);
 
@@ -48,6 +49,7 @@ export function Web3ContextProvider({ children }) {
     const [ approvingToMarketplace, setApprovingToMarketplace ] = useState(false);
     const [ creatingMarketItem, setCreatingMarketItem ] = useState(false);
     const [ currentUserNFTsBoughtOnMarketplace, setCurrentUserNFTsBoughtOnMarketplace ] = useState(null);
+    const [ gettingItem, setGettingItem ] = useState(false);
 
     useEffect(() => {
 		// Polkadot.js extension initialization as per https://polkadot.js.org/docs/extension/usage/
@@ -55,15 +57,17 @@ export function Web3ContextProvider({ children }) {
 		const evmProvider = new Provider({
 		  provider: new WsProvider(URL)
 		});
+
 		setEvmProvider(evmProvider);
 	
 		evmProvider.api.on('connected', () => setIsApiConnected(true));
 		evmProvider.api.on('disconnected', () => setIsApiConnected(false));
-	
-		// Populate account dropdown with all accounts when API is ready
+        console.log(evmProvider);
+
+        // Populate account dropdown with all accounts when API is ready
 		evmProvider.api.on('ready', async () => {
 		  try {
-			await injectedPromise
+            await injectedPromise
 			  .then(() => web3Accounts())
 			  .then((accounts) =>
 				accounts.map(
@@ -103,31 +107,40 @@ export function Web3ContextProvider({ children }) {
 
 
     useEffect(() => {
-		if (accountId && evmProvider && evmProvider.api) {
+		if (wallet) {
 		  evmProvider.api.isReady.then(() => {
-			evmProvider.api.query.evmAccounts.evmAddresses(accountId).then((result) => {
+			evmProvider.api.query.evmAccounts.evmAddresses(accountId).then(async (result) => {
 			  if (result.isEmpty) {
-				setEvmAddress(null);
+                await wallet.claimDefaultAccount();
+				setEvmAddress((await wallet.getAddress()));
 			  } else {
 				setEvmAddress(result.toString());
-                setWallet(new EvmSigner(evmProvider, accountId, accountSigner));
 			  }
 			});
 		  });
 		} else {
 		  setEvmAddress(null);
 		}
-	}, [accountId]);
+	}, [wallet]);
 
+
+    useEffect(() => {
+        if (accountId && evmProvider && accountSigner) {
+            setWallet(new EvmSigner(evmProvider, accountId, accountSigner));
+        }
+    }, [accountId]);
     
     useEffect(() => {
         if(evmAddress != null && wallet != null) {
+            console.log("checking if user registered");
             setCheckingUserRegistered(true);
             const init = async () => {
                 checkUserRegistered()
                 .then(result => {
+                    console.log(evmAddress);
+                    console.log("Result" + result);
                     setUserRegistered(result);
-                    setCheckingUserRegistered(true);
+                    setCheckingUserRegistered(false);
                 })
             }
             init();
@@ -135,7 +148,7 @@ export function Web3ContextProvider({ children }) {
     }, [evmAddress, wallet]);
 
     useEffect(() => {
-        if(userRegistered != false) {
+        if(userRegistered != false && wallet != null) {
             getCreatorAddressBySenderUsingSigner();
         }
     }, [userRegistered]);
@@ -236,6 +249,13 @@ export function Web3ContextProvider({ children }) {
         setApprovingToMarketplace(false);
     }
 
+    async function getMarketItemByIdUsingSigner(itemId) {
+        setGettingItem(true);
+        let nft = await getMarketItemByItemId(wallet, itemId);
+        setGettingItem(false);
+        return nft;
+    }
+
     return (
         <Web3Context.Provider 
             value={{ 
@@ -262,6 +282,8 @@ export function Web3ContextProvider({ children }) {
                 accountId,
                 evmAddress,
                 wallet,
+                injectedAccounts,
+                setAccountId,
                 fetchMarketItemsUsingSigner,
                 fetchItemsCreatedUsingSigner,
                 fetchMyNFTsUsingSigner,
@@ -273,7 +295,8 @@ export function Web3ContextProvider({ children }) {
                 checkUserRegistered,
                 nftMetadataUsingSigner,
                 approveToMarketplaceUsingSigner,
-                createMarketItemUsingSigner
+                createMarketItemUsingSigner,
+                getMarketItemByIdUsingSigner
             }}
         >
             {children}

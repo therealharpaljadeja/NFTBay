@@ -35,6 +35,7 @@ export const fetchItemsCreated = async (wallet) => {
             
             nft.collectionAddress = result[i].nftContract;
             nft.seller = result[i].seller;
+            nft.itemId = result[i].itemId;
             nft.price = ethers.utils.formatEther(result[i].price);
             nft.tokenId = result[i].tokenId.toString();
             nft.owner = owner;
@@ -81,6 +82,7 @@ export const fetchMarketItems = async (wallet) => {
         
         nft.collectionAddress = result[i].nftContract;
         nft.seller = result[i].seller;
+        nft.itemId = result[i].itemId;
         nft.price = ethers.utils.formatEther(result[i].price);
         nft.tokenId = result[i].tokenId.toString();
         nft.owner = owner;
@@ -152,4 +154,45 @@ export const createMarketItem = async (wallet, collectionAddress, tokenId, price
     let nftMarketContract = new ethers.Contract(process.env.REACT_APP_MARKETPLACE_CONTRACT_REEF, NFTMarket.abi, wallet);
     let result = await nftMarketContract.createMarketItem(collectionAddress, tokenId, price, { value: ethers.utils.parseUnits("0.025", "ether") });
     return result;
+}
+
+export const getMarketItemByItemId = async (wallet, itemId) => {
+    let nftMarketContract = new ethers.Contract(process.env.REACT_APP_MARKETPLACE_CONTRACT_REEF, NFTMarket.abi, wallet);
+    let result = await nftMarketContract.getMarketItemById(itemId);
+    let nft = {};
+            
+    let nftContract = new ethers.Contract(result.nftContract, NFT.abi, wallet);
+
+    let tokenURI = await nftContract.tokenURI(result.tokenId.toString());
+    let owner = await nftContract.ownerOf(result.tokenId.toString());
+    let response = await axios.get(tokenURI);
+    const { name, description } = response.data;
+    let ImageUrlSplit = response.data.image.split("/", 4);
+
+    let imageUrl = `https://ipfs.io/ipfs/${ImageUrlSplit[ImageUrlSplit.length - 2] + '/'+ ImageUrlSplit[ImageUrlSplit.length - 1]}`
+    // let isApprovedByOwner = await nftContract.isApprovedToMarketplace(process.env.REACT_APP_MARKETPLACE_CONTRACT_REEF, result.tokenId.toString());
+    const creatorsContract = new ethers.Contract(process.env.REACT_APP_CREATORS_CONTRACT_REEF, Creators.abi, wallet);
+    let creatorAddress = await creatorsContract.getCreatorAddressByAddress(result.seller);
+    let creatorContract = new ethers.Contract(creatorAddress, Creator.abi, wallet);
+    let sellerName = await creatorContract.name();
+    let sellerProfilePic = await creatorContract.profilePicUrl();
+    
+    nft.collectionAddress = result.nftContract;
+    nft.seller = result.seller;
+    nft.itemId = result.itemId;
+    nft.price = ethers.utils.formatEther(result.price);
+    nft.tokenId = result.tokenId.toString();
+    nft.owner = owner;
+    nft.name = name;
+    nft.description = description;
+    nft.image = imageUrl;
+    nft.creatorAddress = creatorAddress;
+    nft.creator = {};
+    nft.creator.name = sellerName;
+    nft.creator.profilePicUrl = sellerProfilePic;
+    // nft.isApprovedByOwner = isApprovedByOwner;
+
+    console.log(nft);
+    return nft;
+
 }

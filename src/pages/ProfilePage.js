@@ -8,6 +8,7 @@ import CustomTab from "../components/CustomTab";
 import ProfileBody from "../components/ProfileBody";
 import ProfileHeader from "../components/ProfileHeader";
 import { Web3Context } from "../context/Web3Context";
+import PostPage from "./PostPage";
 
 function ProfilePage() {
 
@@ -50,8 +51,9 @@ function ProfilePage() {
                             loadingNFT == false && currentUserNFTs != null && currentUserNFTOnMarketplace != null && userOwnedNFT != null ?
                             <Tabs colorScheme="brand" isFitted overflowX="scroll" width="100%">
                                 <TabList>
-                                    <CustomTab icon={<MdOutlineSell />} number={userOwnedNFT.length} />
-                                    <CustomTab icon={<BiUser />} number={currentUserNFTOnMarketplace.length} />
+                                
+                                    <CustomTab icon={<BiUser />} number={userOwnedNFT.length} />
+                                    <CustomTab icon={<MdOutlineSell />} number={currentUserNFTOnMarketplace.length} />
                                 </TabList>
                                 <TabPanels>
                                     <TabPanel padding={0}>
@@ -83,9 +85,9 @@ function ProfilePage() {
                                             {
                                                 currentUserNFTOnMarketplace != null ?
                                                 currentUserNFTOnMarketplace.map(nft => {
-                                                        let toUrl = `/nft/${nft.creatorAddress}/${nft.collectionAddress}/${nft.tokenId}`
+                                                        let toUrl = `/nft/marketplace/${nft.creatorAddress}/${nft.collectionAddress}/${nft.itemId}`
                                                         return (
-                                                            <Link key={nft.name} to={toUrl}>
+                                                            <Link key={nft.name}  to={toUrl}>
                                                                 <Image key={nft.name} src={nft.image} />
                                                             </Link>
                                                         )

@@ -48,7 +48,7 @@ function App() {
                             justifyContent="center"
                         >
                             {
-                                accountId !== undefined ?
+                                accountId !== null ?
                                 // isCheckingUser == true ?
                                     // <Spinner />
                                     // :
@@ -61,6 +61,9 @@ function App() {
                                                 <Route exact path="/nft/:creator/:address/:id">
                                                     <PostPage />
                                                 </Route>
+                                                <Route exact path="/nft/marketplace/:creator/:address/:itemId">
+                                                    <PostPage />
+                                                </Route>
                                                 <Route exact path="/feed">
                                                     <Feed />
                                                 </Route>
@@ -68,7 +71,7 @@ function App() {
                                         :
                                             <OnboardingModal accountAddress={evmAddress} isOpen={userRegistered === false} onClose={onClose} />
                                     :
-                                        null
+                                    null
                                 :
                                 <>
                                     <Spinner />

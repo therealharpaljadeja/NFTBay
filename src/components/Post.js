@@ -4,10 +4,11 @@ import PostBody from "./PostBody";
 import PostHeader from "./PostHeader";
 
 function Post({ isExpanded, nft, id }) {
+    console.log(nft);
     return (
         <VStack width="100%">
             <PostHeader profilePicUrl={nft.creator.profilePicUrl} name={nft.creator.name} />            
-            <Image marginTop="0px !important" src={nft.image} />
+            <Image marginTop="0px !important" width="100%" height="100%" src={nft.image} />
             {
                 isExpanded ?
                 <ExpandedPostBody name={nft.name} tokenId={id} isApprovedByOwner={nft.isApprovedByOwner} seller={nft.seller} collectionAddress={nft.collectionAddress} owner={nft.owner} price={nft.price} bio={nft.description} />
