@@ -34,7 +34,7 @@ function Header() {
         <>
             <ProfileSettingsModal isOpen={isOpen} onClose={onClose}  />
             <HStack top={0} justifyContent="space-between" padding={4} borderBottom="1px solid" borderColor="brand.200" position="sticky" zIndex="1000" background="light.200" width="100%" height="8vh" boxShadow="0 10px 200px 6px rgba(0,0,0,.1)">
-                <Text color="brand.100">MeMarket</Text>
+                <Text color="brand.100">NFTBay</Text>
                 {
                     injectedAccountsFromContext !== null && accountId != null ?
                     <>

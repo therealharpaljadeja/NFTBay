@@ -199,6 +199,7 @@ export function Web3ContextProvider({ children }) {
     async function getNFTsOwnerByUserUsingSigner() {
         setLoadingNFT(true);
         let result = await tokenOwnedByUser(wallet, creatorAddress);
+        console.log(result);
         setCurrentUserNFTs(result);
         setLoadingNFT(false);
     }
@@ -221,6 +222,7 @@ export function Web3ContextProvider({ children }) {
         setFetchingMyNFTs(true);
         let result = await fetchMyNFTs(wallet);
         setCurrentUserNFTsBoughtOnMarketplace(result);
+        console.log(result);
         setFetchingMyNFTs(false);
     }
 

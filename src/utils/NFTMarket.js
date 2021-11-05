@@ -102,43 +102,50 @@ export const fetchMarketItems = async (wallet) => {
 }
 
 export const fetchMyNFTs = async (wallet) => {
+    let currentAddress = await wallet.getAddress();
+    console.log(currentAddress);
     let nftMarketContract = new ethers.Contract(process.env.REACT_APP_MARKETPLACE_CONTRACT_REEF, NFTMarket.abi, wallet);
     let result = await nftMarketContract.fetchMyNFTs();
-    let nfts = [];  
+    let nfts = []; 
     for(let i = 0; i < result.length; i++) {
-        let nft = {};
-        
         let nftContract = new ethers.Contract(result[i].nftContract, NFT.abi, wallet);
-
-        let tokenURI = await nftContract.tokenURI(result[i].tokenId.toString());
         let owner = await nftContract.ownerOf(result[i].tokenId.toString());
-        let response = await axios.get(tokenURI);
-        const { name, description } = response.data;
-        let ImageUrlSplit = response.data.image.split("/", 4);
-
-        let imageUrl = `https://ipfs.io/ipfs/${ImageUrlSplit[ImageUrlSplit.length - 2] + '/'+ ImageUrlSplit[ImageUrlSplit.length - 1]}`
-        // let isApprovedByOwner = await nftContract.isApprovedToMarketplace(process.env.REACT_APP_MARKETPLACE_CONTRACT_REEF, result[i].tokenId.toString());
-        const creatorsContract = new ethers.Contract(process.env.REACT_APP_CREATORS_CONTRACT_REEF, Creators.abi, wallet);
-        let creatorAddress = await creatorsContract.getCreatorAddressByAddress(result[i].seller);
-        let creatorContract = new ethers.Contract(creatorAddress, Creator.abi, wallet);
-        let sellerName = await creatorContract.name();
-        let sellerProfilePic = await creatorContract.profilePicUrl();
+        console.log(owner, result[i].owner == currentAddress);
+        if(owner == currentAddress) {
+            let nft = {};
         
-        nft.collectionAddress = result[i].nftContract;
-        nft.seller = result[i].seller;
-        nft.price = ethers.utils.formatEther(result[i].price);
-        nft.tokenId = result[i].tokenId.toString();
-        nft.owner = owner;
-        nft.name = name;
-        nft.description = description;
-        nft.image = imageUrl;
-
-        nft.creator = {};
-        nft.creator.name = sellerName;
-        nft.creator.profilePicUrl = sellerProfilePic;
-        // nft.isApprovedByOwner = isApprovedByOwner;
-
-        nfts.push(nft);
+    
+            let tokenURI = await nftContract.tokenURI(result[i].tokenId.toString());
+            let response = await axios.get(tokenURI);
+            const { name, description } = response.data;
+            let ImageUrlSplit = response.data.image.split("/", 4);
+    
+            let imageUrl = `https://ipfs.io/ipfs/${ImageUrlSplit[ImageUrlSplit.length - 2] + '/'+ ImageUrlSplit[ImageUrlSplit.length - 1]}`
+            // let isApprovedByOwner = await nftContract.isApprovedToMarketplace(process.env.REACT_APP_MARKETPLACE_CONTRACT_REEF, result[i].tokenId.toString());
+            const creatorsContract = new ethers.Contract(process.env.REACT_APP_CREATORS_CONTRACT_REEF, Creators.abi, wallet);
+            let creatorAddress = await creatorsContract.getCreatorAddressByAddress(result[i].seller);
+            let creatorContract = new ethers.Contract(creatorAddress, Creator.abi, wallet);
+            let sellerName = await creatorContract.name();
+            let sellerProfilePic = await creatorContract.profilePicUrl();
+            
+            nft.collectionAddress = result[i].nftContract;
+            nft.seller = result[i].seller;
+            nft.price = ethers.utils.formatEther(result[i].price);
+            nft.tokenId = result[i].tokenId.toString();
+            nft.owner = owner;
+            nft.name = name;
+            nft.description = description;
+            nft.image = imageUrl;
+            nft.creatorAddress = creatorAddress;
+    
+            nft.creator = {};
+            nft.creator.name = sellerName;
+            nft.creator.profilePicUrl = sellerProfilePic;
+            // nft.isApprovedByOwner = isApprovedByOwner;
+    
+            nfts.push(nft);
+        }
+        
     }
 
     return nfts;

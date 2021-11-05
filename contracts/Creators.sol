@@ -23,6 +23,7 @@ contract Creators {
         require(temp == address(0), "Username already exists");
         
         Creator creator = new Creator(username, name, bio, profilePicUrl, nftCollectionName, nftCollectionSymbol);
+        creator.transferOwnership(msg.sender);
         usernameToCreatorMapping[username] = address(creator);
         addressToCreatorMapping[msg.sender] = address(creator);
 

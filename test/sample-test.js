@@ -97,6 +97,7 @@ describe("NFT", function() {
     // deploying marketplace 
     let NFTMarket = await ethers.getContractFactory("NFTMarket");
     let nftMarket = await NFTMarket.deploy();
+
     await nftMarket.deployed();
 
     const listingPrice = await nftMarket.getListingPrice();
@@ -114,23 +115,22 @@ describe("NFT", function() {
 
     // get creator address from creators.
     let creator = await creators.getCreatorAddressByUsername("azure1050");
-    console.log(creator);
     let Creator = await ethers.getContractFactory("Creator");
     let creatorContract = await Creator.attach(creator);
     
     // get nftCollectionAddress from creators.
     let nftContractAddress = await creatorContract.nftCollectionAddress();
-    let NFT = await ethers.getContractFactory("NFT");
+    let NFT = await ethers.getContractFactory("contracts/NFT.sol:NFT");
     
     let nftContract = await NFT.attach(nftContractAddress);
     
     // mint an nft
-    await nftContract.connect(firstSigner).createToken("https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg");
-    await nftContract.connect(firstSigner).createToken("https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg");
-    await nftContract.connect(buyerSigner).createToken("https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg");
-    await nftContract.connect(firstSigner).createToken("https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg");
+    await nftContract.connect(firstSigner).createToken("https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg", 10);
+    // await nftContract.connect(firstSigner).createToken("https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg", 5);
+    // await nftContract.connect(buyerSigner).createToken("https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg", 5);
+    // await nftContract.connect(firstSigner).createToken("https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__480.jpg", 10);
     
-    console.log(await nftContract.tokenURI(2));
+    // console.log(await nftContract.tokenURI(2));
     
     // let tokenAddress = await creatorContract.tokenAddress();
 
@@ -138,17 +138,12 @@ describe("NFT", function() {
     await nftContract.connect(firstSigner).approve(nftMarket.address, 1);
 
     // list on marketplace 
-    await nftMarket.connect(firstSigner).createMarketItem(nftContractAddress, 1, ethers.utils.parseUnits("0.1", "ether"), { value: listingPrice });
+    await nftMarket.connect(firstSigner).createMarketItem(nftContractAddress, 1, ethers.utils.parseUnits("1", "ether"), { value: listingPrice });
 
     let balanceOf = (await nftContract.balanceOf(firstSigner.address)).toString();
     let marketplaceBalance = (await nftContract.balanceOf(nftMarket.address)).toString();
-    console.log(marketplaceBalance);
 
     let fetchMarketItems = await nftMarket.fetchMarketItems();
-    console.log(fetchMarketItems);
-    for(let i = 0; i < parseInt(balanceOf); i++) {
-      console.log(await nftContract.tokenOfOwnerByIndex(firstSigner.address, i));
-    }
     
     // console.log(nftMarket.address);
     // console.log(await nftMarket.fetchItemsCreated());
@@ -162,7 +157,14 @@ describe("NFT", function() {
     // await tokenContract.connect(firstSigner).transfer(buyerSigner.address, ethers.utils.parseUnits("0.1", "ether"));
 
     // await tokenContract.connect(buyerSigner).approve(nftMarket.address, ethers.utils.parseUnits("0.1", "ether"));
-    await nftMarket.connect(buyerSigner).createMarketSale(nftContractAddress, 1, { value: ethers.utils.parseUnits("0.1", "ether") });
+    await nftMarket.connect(buyerSigner).createMarketSale(nftContractAddress, 1, { value: ethers.utils.parseUnits("1", "ether") });
+    let balanceOfNFTContract = await firstSigner.provider.getBalance(nftContractAddress);
+    console.log(ethers.utils.formatEther((await firstSigner.provider.getBalance(nftContractAddress)).toString()));
+
+    console.log(ethers.utils.formatEther((await firstSigner.provider.getBalance(firstSigner.address)).toString()));
+    await nftContract.connect(buyerSigner).withdraw();
+    console.log(ethers.utils.formatEther((await firstSigner.provider.getBalance(firstSigner.address)).toString()));
+    console.log(ethers.utils.formatEther((await firstSigner.provider.getBalance(nftContractAddress)).toString()));
 
   });
 

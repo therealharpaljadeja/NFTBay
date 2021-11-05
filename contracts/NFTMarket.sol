@@ -5,9 +5,14 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "./NFT.sol";
+
 
 contract NFTMarket is ReentrancyGuard {
   using Counters for Counters.Counter;
+  using SafeMath for uint256;
+
   Counters.Counter private _itemIds;
   Counters.Counter private _itemsSold;
 
@@ -73,7 +78,7 @@ contract NFTMarket is ReentrancyGuard {
       nftContract,
       tokenId,
       msg.sender,
-      address(0),
+      address(this),
       price,
       false
     );
@@ -85,14 +90,21 @@ contract NFTMarket is ReentrancyGuard {
   ) public payable nonReentrant {
     uint price = idToMarketItem[itemId].price;
     require(msg.value >= price, "Send correct amount of ether");
+
     uint tokenId = idToMarketItem[itemId].tokenId;
     address payable seller = idToMarketItem[itemId].seller;
+    
     IERC721(nftContract).transferFrom(address(this), msg.sender, tokenId);
     idToMarketItem[itemId].owner = payable(msg.sender);
     idToMarketItem[itemId].sold = true;
     _itemsSold.increment();
+    uint256 royaltyPercentage = NFT(payable(nftContract)).getRoyaltyPercentage(tokenId);
+
+    uint256 royaltyAmount = price.mul(royaltyPercentage).div(100); 
+    uint256 sellerAmount = price.sub(royaltyAmount);
     payable(owner).transfer(listingPrice);
-    payable(seller).transfer(price);
+    payable(seller).transfer(sellerAmount);
+    payable(address(nftContract)).transfer(royaltyAmount);
   }
 
   function fetchMarketItems() public view returns (MarketItem[] memory) {
