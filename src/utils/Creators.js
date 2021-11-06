@@ -36,6 +36,8 @@ export const getCreatorObjFromAddress = async (wallet, contractAddress) => {
     let nftCollectionSymbol = await creatorContract.nftCollectionSymbol();
     let nftCollectionAddress = await creatorContract.nftCollectionAddress();
 
+    let royaltyEarned = ethers.utils.formatEther((await wallet.provider.getBalance(nftCollectionAddress)).toString());
+
     return {
         username,
         name,
@@ -43,6 +45,7 @@ export const getCreatorObjFromAddress = async (wallet, contractAddress) => {
         nftCollectionName,
         nftCollectionSymbol,
         nftCollectionAddress,
-        profilePicUrl
+        profilePicUrl,
+        royaltyEarned
     }
 }

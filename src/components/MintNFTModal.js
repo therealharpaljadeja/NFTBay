@@ -12,10 +12,12 @@ function MintNFTModal({ isOpen, onClose }) {
     const [ title, setTitle ] = useState("");
     const [ description, setDescription ] = useState("");
     const [ fileObj, setFileObj ] = useState(null);
-
+    const [ royaltyPercentage, setRoyaltyPercentage ] = useState(0);
 
     const web3Context = useContext(Web3Context);
     const { mintNFTUsingSigner, isMintingNFT } = web3Context;
+    const [ uploadingMetadata, setUploadingMetadata ] = useState(false);
+    
 
     const handleImageUpload = async ({ target }) => {
         console.log(target.files[0])
@@ -35,6 +37,7 @@ function MintNFTModal({ isOpen, onClose }) {
     }
 
     const handleMintNFT = async () => {
+        setUploadingMetadata(true);
         const metadata = await client.store({
             name: title,
             description,
@@ -44,11 +47,12 @@ function MintNFTModal({ isOpen, onClose }) {
         console.log(metadata.url);
         let metadataSplit = metadata.url.split("/", 4);
         const url = "https://ipfs.io/ipfs/" + metadataSplit[metadataSplit.length - 2] + '/'+ metadataSplit[metadataSplit.length - 1];
-        mintNFTUsingSigner(url);
+        setUploadingMetadata(false);
+        mintNFTUsingSigner(url, royaltyPercentage);
     }
 
     return (
-        <CustomModal isOpen={isOpen} onClose={onClose} modalHeader="Mint NFT" modalCloseButton={true} modalButtonOnClick={handleMintNFT} modalFooterButtonText="Mint" modalButtonLoadingState={isMintingNFT}>
+        <CustomModal isOpen={isOpen} onClose={onClose} modalHeader="Mint NFT" modalCloseButton={true} modalButtonOnClick={handleMintNFT} modalFooterButtonText="Mint" modalButtonLoadingState={uploadingMetadata || isMintingNFT}>
             <VStack spacing={5} alignItems="flex-start">
                 {
                     isImageUploaded ?
@@ -67,6 +71,10 @@ function MintNFTModal({ isOpen, onClose }) {
                 <FormControl>
                     <FormLabel>Description</FormLabel>
                     <Textarea onChange={(e) => handleInputChange(e, setDescription)} value={description} />
+                </FormControl>
+                <FormControl>
+                    <FormLabel>Royalty Percentage</FormLabel>
+                    <Input onChange={(e) => handleInputChange(e, setRoyaltyPercentage)} value={royaltyPercentage} />
                 </FormControl>
             </VStack>
         </CustomModal>

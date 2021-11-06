@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { isUserRegistered, getCreatorAddressBySender, getCreatorAddressByUsername, registerUser, getCreatorObjFromAddress } from "../utils/Creators";
-import { approveToMarketplace, mintNFT, tokenMetadata, tokenOwnedByUser } from "../utils/NFT";
+import { approveToMarketplace, mintNFT, tokenMetadata, tokenOwnedByUser, withdrawRoyalty } from "../utils/NFT";
 import { createMarketItem, createSale, fetchItemsCreated, fetchMarketItems, fetchMyNFTs, getMarketItemByItemId } from "../utils/NFTMarket";
 import { Provider, Signer as EvmSigner } from '@reef-defi/evm-provider';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
@@ -50,6 +50,7 @@ export function Web3ContextProvider({ children }) {
     const [ creatingMarketItem, setCreatingMarketItem ] = useState(false);
     const [ currentUserNFTsBoughtOnMarketplace, setCurrentUserNFTsBoughtOnMarketplace ] = useState(null);
     const [ gettingItem, setGettingItem ] = useState(false);
+    const [ withdrawingRoyalty, setWithdrawingRoyalty ] = useState(false);
 
     useEffect(() => {
 		// Polkadot.js extension initialization as per https://polkadot.js.org/docs/extension/usage/
@@ -62,7 +63,6 @@ export function Web3ContextProvider({ children }) {
 	
 		evmProvider.api.on('connected', () => setIsApiConnected(true));
 		evmProvider.api.on('disconnected', () => setIsApiConnected(false));
-        console.log(evmProvider);
 
         // Populate account dropdown with all accounts when API is ready
 		evmProvider.api.on('ready', async () => {
@@ -132,13 +132,10 @@ export function Web3ContextProvider({ children }) {
     
     useEffect(() => {
         if(evmAddress != null && wallet != null) {
-            console.log("checking if user registered");
             setCheckingUserRegistered(true);
             const init = async () => {
                 checkUserRegistered()
                 .then(result => {
-                    console.log(evmAddress);
-                    console.log("Result" + result);
                     setUserRegistered(result);
                     setCheckingUserRegistered(false);
                 })
@@ -190,16 +187,15 @@ export function Web3ContextProvider({ children }) {
         }
     }
 
-    async function mintNFTUsingSigner(tokenURI) {
+    async function mintNFTUsingSigner(tokenURI, royaltyPercentage) {
         setIsMintingNFT(true);
-        let result = await mintNFT(wallet, creatorAddress, tokenURI);
+        let result = await mintNFT(wallet, creatorAddress, tokenURI, royaltyPercentage);
         setIsMintingNFT(false);
     }
 
     async function getNFTsOwnerByUserUsingSigner() {
         setLoadingNFT(true);
         let result = await tokenOwnedByUser(wallet, creatorAddress);
-        console.log(result);
         setCurrentUserNFTs(result);
         setLoadingNFT(false);
     }
@@ -222,7 +218,6 @@ export function Web3ContextProvider({ children }) {
         setFetchingMyNFTs(true);
         let result = await fetchMyNFTs(wallet);
         setCurrentUserNFTsBoughtOnMarketplace(result);
-        console.log(result);
         setFetchingMyNFTs(false);
     }
 
@@ -258,6 +253,12 @@ export function Web3ContextProvider({ children }) {
         return nft;
     }
 
+    async function withdrawRoyaltyUsingSigner() {
+        setWithdrawingRoyalty(true);
+        withdrawRoyalty(creator.nftCollectionAddress, wallet);
+        setWithdrawingRoyalty(false);
+    }
+
     return (
         <Web3Context.Provider 
             value={{ 
@@ -285,6 +286,7 @@ export function Web3ContextProvider({ children }) {
                 evmAddress,
                 wallet,
                 injectedAccounts,
+                withdrawingRoyalty,
                 setAccountId,
                 fetchMarketItemsUsingSigner,
                 fetchItemsCreatedUsingSigner,
@@ -298,7 +300,8 @@ export function Web3ContextProvider({ children }) {
                 nftMetadataUsingSigner,
                 approveToMarketplaceUsingSigner,
                 createMarketItemUsingSigner,
-                getMarketItemByIdUsingSigner
+                getMarketItemByIdUsingSigner,
+                withdrawRoyaltyUsingSigner
             }}
         >
             {children}

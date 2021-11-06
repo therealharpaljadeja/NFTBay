@@ -21,7 +21,7 @@ function Footer() {
                 </Link>
 
                 {/* <FiUsers disabled={(account == null || account == undefined).toString()} size="22px" /> */}
-                <IconButton disabled={accountId === null || accountId === undefined} onClick={onOpen} icon={<IoMdAdd stroke-width="60px" />} />
+                <IconButton disabled={accountId === null || accountId === undefined} onClick={onOpen} icon={<IoMdAdd strokeWidth="60px" />} />
                 {/* <IoMdAdd size="25px" /> */}
                 {/* <BsChatLeft disabled={(account == null || account == undefined).toString()} size="22px" /> */}
                 <Link to="/">

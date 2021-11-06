@@ -42,7 +42,7 @@ function ProfilePage() {
                     <ProfileHeader username={username} profilePicUrl={profilePicUrl} />
                     {
                         currentUserNFTs != null && userOwnedNFT != null && currentUserNFTOnMarketplace != null && currentUserNFTsBoughtOnMarketplace != null ?
-                        <ProfileBody nftOwned={userOwnedNFT.length + currentUserNFTOnMarketplace.length} username={username} bio={bio} name={name} />
+                        <ProfileBody royaltyEarned={creator.royaltyEarned} nftOwned={userOwnedNFT.length + currentUserNFTOnMarketplace.length} username={username} bio={bio} name={name} />
                         :
                         <Spinner />
                     }

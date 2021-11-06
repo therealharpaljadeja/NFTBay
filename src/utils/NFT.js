@@ -11,10 +11,10 @@ export const balanceOf = async (wallet, creatorAddress) => {
     return result;
 }
 
-export const mintNFT = async (wallet, creatorAddress, tokenURI) => {
+export const mintNFT = async (wallet, creatorAddress, tokenURI, royaltyPercentage) => {
     let collectionAddress = await getNFTCollectionAddress(wallet, creatorAddress);
     let nftContract = new ethers.Contract(collectionAddress, NFT.abi, wallet);
-    let result = await nftContract.createToken(tokenURI);
+    let result = await nftContract.createToken(tokenURI, royaltyPercentage);
     return result;
 }
 
@@ -84,3 +84,8 @@ export const approveToMarketplace = async (wallet, collectionAddress, tokenId) =
     let nftContract = new ethers.Contract(collectionAddress, NFT.abi, wallet);
     await nftContract.approve(process.env.REACT_APP_MARKETPLACE_CONTRACT_REEF, tokenId);
 } 
+
+export const withdrawRoyalty = async (collectionAddress, wallet) => {
+    let nftContract = new ethers.Contract(collectionAddress, NFT.abi, wallet);
+    await nftContract.withdraw();
+}

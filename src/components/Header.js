@@ -19,8 +19,6 @@ function Header() {
     useEffect(() => {
         if(injectedAccounts !== undefined) {
             setInjectedAccountsFromContext(injectedAccounts);  
-            console.log(injectedAccountsFromContext);          
-            console.log(JSON.stringify(injectedAccounts));
         }
     }, [JSON.stringify(injectedAccounts)])
 
