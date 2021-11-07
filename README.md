@@ -20,4 +20,9 @@
 - NFTBay plans to let creators spin up their own **token governed DAO's**
 - NFTBay plans to let creators create **Multi-Royalty** (Collaboration b/w creators / brands) based NFTs.
 
+## License
+The source code is licensed under the MIT license, which you can find in the MIT-LICENSE.txt file.
+
+
 #### Youtube Video Link - 
+

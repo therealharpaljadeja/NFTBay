@@ -7,7 +7,6 @@ async function getDeployerBalance(deployer) {
 async function main() {
 
   const testnetAccount = await hre.reef.getSignerByName("testnet_account");
-  console.log(testnetAccount);
   await testnetAccount.claimDefaultAccount();
 
   console.log(`Deploying using address: ${testnetAccount._substrateAddress}`);
