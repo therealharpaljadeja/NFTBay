@@ -1,6 +1,6 @@
 import { VStack, Spinner } from "@chakra-ui/react";
 import Post from "../components/Post";
-import { useEffect, useContext, useState } from "react/cjs/react.development";
+import { useEffect, useContext, useState } from "react";
 import { Web3Context } from "../context/Web3Context";
 import { useParams } from "react-router-dom";
 

@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { FormLabel, FormControl, VStack, Image, Input, Textarea } from "@chakra-ui/react";
 import { Web3Context } from "../context/Web3Context";
 import CustomModal from "./CustomModal";
-import { useEffect } from "react/cjs/react.development";
+import { useEffect } from "react";
 
 function ProfileSettingsModal({ isOpen, onClose }) {
 

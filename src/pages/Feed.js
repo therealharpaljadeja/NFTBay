@@ -3,7 +3,7 @@ import Post from "./../components/Post";
 import { VStack, Spinner, Heading } from "@chakra-ui/react";
 import { Web3Context } from "../context/Web3Context";
 import { tokenOwnedByUser } from "../utils/NFT";
-import { useEffect } from "react/cjs/react.development";
+import { useEffect } from "react";
 
 function Feed() {
 

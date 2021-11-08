@@ -4,7 +4,7 @@ import { Web3Context } from "../context/Web3Context";
 import SellNFTModal from "./SellNFTModal";
 import { useDisclosure }  from "@chakra-ui/react"; 
 import { ethers } from "ethers";
-import { useEffect } from "react/cjs/react.development";
+import { useEffect } from "react";
 
 function PostBody({ owner, bio, collectionAddress, seller, isApprovedByOwner, tokenId, name, price }) {
 
