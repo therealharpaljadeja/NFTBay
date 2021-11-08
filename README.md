@@ -24,5 +24,7 @@
 The source code is licensed under the MIT license, which you can find in the MIT-LICENSE.txt file.
 
 
-#### Youtube Video Link - 
+#### Youtube Video Link - https://www.youtube.com/watch?v=rIHZcoaWXF4
+
+#### Live Demo (Minor Bugs 😅) (Change orientation to mobile using developer console) - https://unruffled-bartik-d2a090.netlify.app/ 
 
