@@ -5,7 +5,6 @@ import { createMarketItem, createSale, fetchItemsCreated, fetchMarketItems, fetc
 import { Provider, Signer as EvmSigner } from '@reef-defi/evm-provider';
 import { web3Accounts, web3Enable } from '@polkadot/extension-dapp';
 import { WsProvider } from '@polkadot/rpc-provider';
-import { EventFragment } from "@ethersproject/abi";
 
 export const Web3Context = React.createContext(undefined);
 

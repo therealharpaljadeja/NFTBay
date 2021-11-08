@@ -1,11 +1,10 @@
 import { HStack, Text, useDisclosure, IconButton, Select, Image } from "@chakra-ui/react";
 import { FiSettings } from "react-icons/fi";
 import ProfileSettingsModal from "./ProfileSettingsModal";
-import CustomAvatar from "./CustomAvatar";
 import { Web3Context } from "../context/Web3Context";
 import { useContext } from "react";
 import { Identicon } from '@polkadot/react-identicon';
-import { useEffect, useState } from "react/cjs/react.development";
+import { useEffect, useState } from "react";
 
 function Header() {
     const { isOpen, onOpen, onClose } = useDisclosure();
