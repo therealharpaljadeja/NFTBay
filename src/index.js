@@ -1,27 +1,37 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { Web3ContextProvider } from './context/Web3Context';
-import { cryptoWaitReady, mnemonicGenerate } from '@polkadot/util-crypto';
-import { keyring } from '@polkadot/ui-keyring';
-
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import { Web3ContextProvider } from "./context/Web3Context";
+import { CreatorsContextProvider } from "./context/CreatorsContext";
+import { CreatorContextProvider } from "./context/CreatorContext";
+import { NFTMarketContextProvider } from "./context/NFTMarketContext";
+import { NFTContextProvider } from "./context/NFTContext";
+import { cryptoWaitReady, mnemonicGenerate } from "@polkadot/util-crypto";
+import { keyring } from "@polkadot/ui-keyring";
 
 cryptoWaitReady()
-.then(() => {
-  keyring.loadAll({ ss58Format: 42, type: 'sr25519' });
-  ReactDOM.render(
-    <React.StrictMode>
-      <Web3ContextProvider>
-        <App />
-      </Web3ContextProvider>
-    </React.StrictMode>,
-    document.getElementById('root')
-  );  
-})
-.catch(console.error)
-
+	.then(() => {
+		keyring.loadAll({ ss58Format: 42, type: "sr25519" });
+		ReactDOM.render(
+			<React.StrictMode>
+				<Web3ContextProvider>
+					<CreatorsContextProvider>
+						<CreatorContextProvider>
+							<NFTMarketContextProvider>
+								<NFTContextProvider>
+									<App />
+								</NFTContextProvider>
+							</NFTMarketContextProvider>
+						</CreatorContextProvider>
+					</CreatorsContextProvider>
+				</Web3ContextProvider>
+			</React.StrictMode>,
+			document.getElementById("root")
+		);
+	})
+	.catch(console.error);
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

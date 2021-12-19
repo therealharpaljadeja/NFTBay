@@ -3583,10 +3583,10 @@
     "@reef-defi/api-derive" "^1.0.1"
     "@reef-defi/types" "^1.0.1"
 
-"@reef-defi/evm-provider@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@reef-defi/evm-provider/-/evm-provider-1.0.2.tgz#a48f6d209e87fb5275bc624c5ce59ea8e4289dac"
-  integrity sha512-31vPQrh96xuBKoqpbXJiVT5qHBo+32k7axmlKVFmpT2GP46xPyOJyMsUI0Vwju8RLzFPvr55yfBaGt4i8UjJGQ==
+"@reef-defi/evm-provider@^1.0.3", "@reef-defi/evm-provider@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@reef-defi/evm-provider/-/evm-provider-1.0.4.tgz#4c02a1d22b6f302edb8ec49ac9e525581485f2b5"
+  integrity sha512-Sl+fjcZr3AHeUPNfX2/39qGY5DSyI2cUGzHciCP29v64VYZGwbcVVgTYk6gQL7ZKiqkg5jCZ4rqxySfFg5Fr+Q==
   dependencies:
     "@open-web3/dev-config" "^0.1.13"
     "@open-web3/scanner" "^1.0.1"
@@ -3603,16 +3603,14 @@
     blakejs "~1.1.0"
     ethers "~5.5.0"
 
-"@reef-defi/hardhat-reef@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@reef-defi/hardhat-reef/-/hardhat-reef-1.0.0.tgz#017a208c72732c3960d0bec29ba87baba60eb6c0"
-  integrity sha512-K4R8nhMHYM/IrXlMK1NA268spwfC64EUVy5OpCmZ/hX9vYtJ0QgIBH4ZterAQTr1AjDOEXeNc3ODPy6Hp18wCQ==
+"@reef-defi/hardhat-reef@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@reef-defi/hardhat-reef/-/hardhat-reef-1.0.2.tgz#c26fcd0a63e30d4b5693bdcc3c6f762073e0b897"
+  integrity sha512-rc6ZLbdy7n9iCmFF9++U1N9BoAVbYSoyjHmw9dtkiAe1Fk0sdxGzmJ42v9n1/88Q5AGOZsaJTDvY5K3gg13Vcw==
   dependencies:
-    "@polkadot/api" "^6.3.1"
-    "@polkadot/types" "^6.3.1"
-    "@reef-defi/evm-provider" "^1.0.2"
+    "@reef-defi/evm-provider" "^1.0.3"
     "@types/validator" "^13.1.3"
-    ethers "~5.5.0"
+    axios "^0.24.0"
     fs-extra "^9.1.0"
     node-fetch "^2.6.1"
     portscanner "^2.2.0"
