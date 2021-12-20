@@ -37,15 +37,17 @@ function ProfilePage() {
 	const creatorsContext = useContext(CreatorsContext);
 	const nftContext = useContext(NFTContext);
 	const nftMarketContext = useContext(NFTMarketContext);
-	const { creator, creatorAddress } = creatorContext;
+	const { creator } = creatorContext;
+	const { creatorAddress } = creatorsContext;
 	const {
 		currentUserNFTs,
 		currentUserNFTOnMarketplace,
 		currentUserNFTsBoughtOnMarketplace,
 		fetchItemsCreatedUsingSigner,
 		fetchMyNFTsUsingSigner,
+		getNFTsOwnerByUserUsingSigner,
+		loadingNFT,
 	} = nftMarketContext;
-	const { getNFTsOwnerByUserUsingSigner, loadingNFT } = web3Context;
 	const {
 		username,
 		name,
@@ -57,8 +59,8 @@ function ProfilePage() {
 	const [userConnected, setUserConnected] = useState(false);
 
 	const [userOwnedNFT, setUserOwnedNFT] = useState(null);
-
 	useEffect(() => {
+		console.log(creatorAddress);
 		if (creatorAddress != null && creator != null) {
 			getNFTsOwnerByUserUsingSigner();
 			fetchItemsCreatedUsingSigner();
@@ -78,6 +80,7 @@ function ProfilePage() {
 		}
 	}, [currentUserNFTs, currentUserNFTsBoughtOnMarketplace]);
 
+	console.log(creator, currentUserNFTs);
 	return (
 		<VStack width="100%" padding={0}>
 			{creator != null ? (
