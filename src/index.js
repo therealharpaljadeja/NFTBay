@@ -10,6 +10,7 @@ import { NFTMarketContextProvider } from "./context/NFTMarketContext";
 import { NFTContextProvider } from "./context/NFTContext";
 import { cryptoWaitReady, mnemonicGenerate } from "@polkadot/util-crypto";
 import { keyring } from "@polkadot/ui-keyring";
+import { BrowserRouter as Router } from "react-router-dom";
 
 cryptoWaitReady()
 	.then(() => {
@@ -17,15 +18,17 @@ cryptoWaitReady()
 		ReactDOM.render(
 			<React.StrictMode>
 				<Web3ContextProvider>
-					<CreatorsContextProvider>
-						<CreatorContextProvider>
-							<NFTMarketContextProvider>
-								<NFTContextProvider>
-									<App />
-								</NFTContextProvider>
-							</NFTMarketContextProvider>
-						</CreatorContextProvider>
-					</CreatorsContextProvider>
+					<Router>
+						<CreatorsContextProvider>
+							<CreatorContextProvider>
+								<NFTMarketContextProvider>
+									<NFTContextProvider>
+										<App />
+									</NFTContextProvider>
+								</NFTMarketContextProvider>
+							</CreatorContextProvider>
+						</CreatorsContextProvider>
+					</Router>
 				</Web3ContextProvider>
 			</React.StrictMode>,
 			document.getElementById("root")
